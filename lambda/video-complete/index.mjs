@@ -69,7 +69,9 @@ async function patchIssue(issueNumber, refreshToken, videoUrl) {
     'User-Agent': 'aws-service-heroes-video-complete',
     'X-GitHub-Api-Version': '2022-11-28',
   }
-  const current = await (await fetch(url, { headers })).json()
+  const read = await fetch(url, { headers })
+  if (!read.ok) throw new Error(`issue_read_failed status=${read.status}`)
+  const current = await read.json()
   const next = withVideoLink(String(current.body ?? ''), videoUrl)
   if (next === null) return
   const res = await fetch(url, {
